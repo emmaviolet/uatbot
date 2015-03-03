@@ -8,7 +8,7 @@ module.exports = (robot) ->
     userName = msg.envelope.user.name
     if uat of uatOwners and uatOwners[uat] == ''
       uatOwners[uat] = userName
-      msg.send "#{userName} has taken #{uat}"
+      msg.send "#{userName} has grabbed #{uat}"
     else if uat of uatOwners and uatOwners[uat] == userName
       msg.send "You already have #{uat}, #{userName}"
     else if uat of uatOwners
