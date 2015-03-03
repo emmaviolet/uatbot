@@ -7,6 +7,9 @@ module.exports = (robot) ->
 
   robot.respond /uat grab (.*)/i, (msg) ->
     uat = toTitleCase(msg.match[1])
+    msg.send "envelope user #{msg.envelope.user.id}"
+    msg.send "envelope user #{msg.envelope.user.name}"
+    msg.send "envelope user #{msg.envelope.user.mention_name}"
     if uat of uatOwners and uatOwners[uat] == ''
       uatOwners[uat] = userName
       msg.send "#{userName} has taken #{uat}"
