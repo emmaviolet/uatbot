@@ -1,15 +1,11 @@
 module.exports = (robot) ->
 
-  userName = 'Emma'
   uatOwners = {'Goldeneye': '', 'Donkeykong': '', 'Starfox': ''}
-
   toTitleCase = (str) -> str[0].toUpperCase() + str[1..str.length - 1].toLowerCase()
 
   robot.respond /uat grab (.*)/i, (msg) ->
     uat = toTitleCase(msg.match[1])
-    msg.send "envelope user #{msg.envelope.user.id}"
-    msg.send "envelope user #{msg.envelope.user.name}"
-    msg.send "envelope user #{msg.envelope.user.mention_name}"
+    userName = msg.envelope.user.name
     if uat of uatOwners and uatOwners[uat] == ''
       uatOwners[uat] = userName
       msg.send "#{userName} has taken #{uat}"
@@ -22,6 +18,7 @@ module.exports = (robot) ->
 
   robot.respond /uat release (.*)/i, (msg) ->
     uat = toTitleCase(msg.match[1])
+    userName = msg.envelope.user.name
     if uat of uatOwners and uatOwners[uat] == userName
       uatOwners[uat] = ''
       msg.send "#{userName} has released #{uat}"
