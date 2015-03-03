@@ -32,3 +32,6 @@ module.exports = (robot) ->
   robot.respond /uat status/i, (msg) ->
     for key, value of uatOwners
       msg.send "#{key}: #{value}"
+
+  robot.respond /uat be grumpy/i, (msg) ->
+    msg.reply "WHAT? (grumpycat)"
