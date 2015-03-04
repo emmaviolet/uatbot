@@ -8,6 +8,27 @@ This README is intended to help get you started. Definitely update and improve t
 [hubot]: http://hubot.github.com
 [generator-hubot]: https://github.com/github/generator-hubot
 
+## Requirements
+
+1. node.js
+1. npm
+
+## Installation
+
+1. Install Node.js
+
+    [Download](http://nodejs.org/download/) the appropriate binary for your OS and install
+
+1. Install NPM (Which comes already with Node)
+
+1. If using Homebrew then:
+
+        brew install node npm
+
+1. Install NPM dependencies
+
+        npm install
+
 ### Running UATBot Locally
 
 You can test your hubot by running the following.
