@@ -1,9 +1,9 @@
 {
-  "name": "UATBot",
+  "name": "Hubot",
   "version": "0.0.0",
   "private": true,
   "author": "Emma Makinson <emma.makinson@fundingcircle.com>",
-  "description": "A robot to help you manage your UATs",
+  "description": "The Funding Circle Hubot",
   "dependencies": {
     "hubot": "^2.11.1",
     "hubot-diagnostics": "0.0.1",
