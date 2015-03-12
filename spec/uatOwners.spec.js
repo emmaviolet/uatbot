@@ -7,7 +7,7 @@ var TextMessage = require('hubot/src/message').TextMessage;
 
 // The below to be refactored on a future turn
 
-describe('UatBot', function() {
+describe('uatOwners', function() {
     var robot;
     var user;
     var adapter;
