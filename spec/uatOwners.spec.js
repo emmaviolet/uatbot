@@ -257,7 +257,7 @@ describe('uatOwners', function() {
                         expect(strings[0]).to.equal(
                             'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \n' +
                             'doubledragon: \ngalaga: \nghostbusters: \ngoldeneye: \nkirby: ' +
-                            'Test3\n mariogolf: undefined\nmetroid: \nmickeymania: Test4\n' +
+                            'Test3\nmariogolf: \nmetroid: \nmickeymania: Test4\n' +
                             'mortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n'
                         );
                         done();
@@ -285,15 +285,6 @@ describe('uatOwners', function() {
         });
 
         describe('uat status <uat>', function() {
-            it('lists the given UATs and their owners', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'uat status astroboy starfox'));
-                done();
-            });
-
             it('strips out commas and white space', function(done) {
                 adapter.on('send', function(envelope, strings) {
                     expect(strings[0]).match(/starfox: \nderbystallion: Test2/);
@@ -302,6 +293,39 @@ describe('uatOwners', function() {
                 adapter.receive(new TextMessage(user, 'uat status starfox, derbystallion'));
                 done();
             });
+
+            describe('when the UAT names are valid', function() {
+                it('lists the given UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status astroboy starfox'));
+                    done();
+                });
+            })
+
+            describe('when the UAT names are invalid', function() {
+                it('tells the user it does not know about the UATs', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/I don\'t know anything about those UATs/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status fudge broom'));
+                    done();
+                });
+            })
+
+            describe('when the UAT names are a combination of valid and invalid', function() {
+                it('lists the valid UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status astroboy invalid starfox'));
+                    done();
+                });
+            })
         });
     });
 

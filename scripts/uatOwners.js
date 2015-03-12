@@ -31,8 +31,7 @@ module.exports = function(robot) {
   };
 
   function getRoomSettings() {
-    var rooms = robot.brain.get('roomSettings');
-    if(!rooms) { robot.brain.set('roomSettings', {}) };
+    if(!robot.brain.get('roomSettings')) { robot.brain.set('roomSettings', {}) }
     return robot.brain.get('roomSettings');
   };
 
@@ -100,9 +99,12 @@ module.exports = function(robot) {
 
     for (var i in uatQueries) {
       uat = uatQueries[i].toLowerCase();
-      uatList += uat + ': ' + uatOwners[uat] + '\n';
+      if (uat in uatOwners) {
+        uatList += uat + ': ' + uatOwners[uat] + '\n';
+      };
     };
-    msg.send(uatList);
+    if (uatList == '') { msg.send('I don\'t know anything about those UATs')}
+    else { msg.send(uatList) }
   });
 
   robot.hear(/uat default ([\w\s,]+)/, function(msg) {
