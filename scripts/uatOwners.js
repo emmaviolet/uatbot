@@ -9,7 +9,7 @@ module.exports = function(robot) {
   function arrayToHash(array) {
     var hash = {};
     for (var i = 0; i < array.length; i ++) {
-      hash[array[i]] = ''
+      hash[array[i]] = '';
     };
     return hash;
   };
@@ -24,43 +24,43 @@ module.exports = function(robot) {
   function uatFree(uat) { return uat in uatOwners && uatOwners[uat] === '' };
   function uatOwnedByUser(uat, user) { return uat in uatOwners && uatOwners[uat] === user };
 
-  robot.hear(/uat grab (.*)/, function(msg) {
+  robot.hear(/uat grab (\w+)/, function(msg) {
     uatOwners = getUatOwners();
     var uat = uatName(msg);
     var user = msg.envelope.user.name;
-    if(uatFree(uat)) {
+    if (uatFree(uat)) {
       uatOwners[uat] = user;
       msg.send(user + ' has grabbed ' + uat);
-    } else if(uatOwnedByUser(uat, user)) {
+    } else if (uatOwnedByUser(uat, user)) {
       msg.send('You already have ' + uat + ', ' + user);
-    } else if(uat in uatOwners) {
+    } else if (uat in uatOwners) {
       msg.send(uatOwners[uat] + ' already has ' + uat);
     } else {
       msg.send('I don\'t know anything about ' + uat);
     }
   });
 
-  robot.hear(/uat release (.*)/, function(msg) {
+  robot.hear(/uat release (\w+)/, function(msg) {
     uatOwners = getUatOwners();
     var uat = uatName(msg);
     var user = msg.envelope.user.name;
-    if(uatFree(uat)) {
+    if (uatFree(uat)) {
       msg.send(uat + ' is not currently in use')
     } else if(uatOwnedByUser(uat, user)) {
       uatOwners[uat] = '';
       msg.send(user + ' has released ' + uat);
-    } else if(uat in uatOwners) {
+    } else if (uat in uatOwners) {
       msg.send(uatOwners[uat] + ' currently has ' + uat);
     } else {
       msg.send('I don\'t know anything about ' + uat);
     }
   });
 
-  robot.hear(/uat steal (.*)/, function(msg) {
+  robot.hear(/uat steal (\w+)/, function(msg) {
     uatOwners = getUatOwners();
     var uat = uatName(msg);
     var user = msg.envelope.user.name;
-    if(uat in uatOwners) {
+    if (uat in uatOwners) {
       uatOwners[uat] = user;
       msg.send(user + ' has stolen ' + uat);
     } else {
@@ -68,17 +68,14 @@ module.exports = function(robot) {
     }
   });
 
-  robot.hear(/uat status (.*)/, function(msg) {
+  robot.hear(/uat status ([\w\s,]+)/, function(msg) {
     uatOwners = getUatOwners();
     var uatList = '';
 
-    if(msg.match[1] === 'all') {
-      uatQueries = Object.keys(uatOwners);
-    } else {
-      uatQueries = msg.match[1].split(/[ ,]+/);
-    }
+    if (msg.match[1] === 'all') { uatQueries = uatNames }
+    else { uatQueries = msg.match[1].split(/[ ,]+/) }
 
-    for(var i in uatQueries) {
+    for (var i in uatQueries) {
       uat = uatQueries[i].toLowerCase();
       uatList += uat + ': ' + uatOwners[uat] + '\n';
     };

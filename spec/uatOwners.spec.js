@@ -110,10 +110,10 @@ describe('UatBot', function() {
         describe('When the UAT is not registered', function() {
             it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat grab not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat grab not_a_uat'));
             });
         });
     });
@@ -183,10 +183,10 @@ describe('UatBot', function() {
         describe('When the UAT is not registered', function() {
             it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat release not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat release not_a_uat'));
             });
         });
     });
@@ -217,24 +217,28 @@ describe('UatBot', function() {
         describe('When the UAT is not registered', function() {
             it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat steal not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat steal not_a_uat'));
             });
         });
     });
 
     describe('uat status', function() {
         beforeEach(function(done) {
-            brain.set('uatOwners', {'goldeneye': 'Test1', 'donkeykong': 'Test2', 'starfox': 'Test3'})
+            brain.set('uatOwners', {
+                'astroboy': 'Test1', 'derbystallion': 'Test2', 'donkeykong': '', 'doubledragon': '', 'galaga': '',
+                'ghostbusters': '','goldeneye': '','kirby': '', 'mariogolf': '', 'metroid': '', 'mickeymania': 'Test3',
+                'mortalkombat': '', 'pikmin': '', 'quake': '', 'starfox': '', 'yoshi': '', 'zelda': ''
+            })
             done();
         });
 
         describe('uat status all', function() {
             it('lists all the UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/goldeneye: Test1\ndonkeykong: Test2\nstarfox: Test3/);
+                    expect(strings[0]).match(/astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \ngalaga: \nghostbusters: \ngoldeneye: \nkirby: \n mariogolf: undefined\nmetroid: \nmickeymania: Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n/);
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat status all'));
@@ -245,19 +249,19 @@ describe('UatBot', function() {
         describe('uat status <uat>', function() {
             it('lists the given UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/goldeneye: Test1\nstarfox: Test3/);
+                    expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat status goldeneye starfox'));
+                adapter.receive(new TextMessage(user, 'uat status astroboy starfox'));
                 done();
             });
 
             it('strips out commas and white space', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/starfox: Test3\ndonkeykong: Test2/);
+                    expect(strings[0]).match(/starfox: \nderbystallion: Test2/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat status starfox, donkeykong'));
+                adapter.receive(new TextMessage(user, 'uat status starfox, derbystallion'));
                 done();
             })
         })
