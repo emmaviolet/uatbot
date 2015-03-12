@@ -20,8 +20,8 @@ module.exports = function(robot) {
   };
 
   function uatName(msg) { return (msg.match[1]).toLowerCase() };
-  function uatFree() { return uat in uatOwners && uatOwners[uat] == '' };
-  function uatOwnedByUser() { return uat in uatOwners && uatOwners[uat] == userName };
+  function uatFree() { return uat in uatOwners && uatOwners[uat] === '' };
+  function uatOwnedByUser() { return uat in uatOwners && uatOwners[uat] === userName };
 
   function assignVariables(msg) {
     uat = uatName(msg);
@@ -71,7 +71,7 @@ module.exports = function(robot) {
     uatOwners = getUatOwners();
     uatList = '';
 
-    if(msg.match[1] == 'all') {
+    if(msg.match[1] === 'all') {
       uatQueries = Object.keys(uatOwners);
     } else {
       uatQueries = msg.match[1].split(/[ ,]+/);
