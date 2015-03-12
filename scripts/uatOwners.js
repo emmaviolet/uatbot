@@ -1,3 +1,16 @@
+// Description:
+// uatOwners manages the allocation of UATs between team members.
+
+// Commands:
+// uat grab <uat>     - allocates the user to the UAT if the UAT is available
+// uat release <uat>  - removes the user from the UAT
+// uat steal <uat>    - allocates the user to the UAT even if the UAT is not available
+// uat status <uat>   - returns the UAT name and the name of the person currrently allocated to it; multiple UAT names can be separated by commas or spaces
+// uat status all     - returns the status of all known UATs
+
+// Author:
+// @emmaviolet
+
 module.exports = function(robot) {
   var uatOwners;
   var uatNames = [
