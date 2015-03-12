@@ -107,10 +107,10 @@ describe('UatBot', function() {
             });
         });
 
-        describe('When the UAT does not exist', function() {
-            it('says it is not a UAT', function(done) {
+        describe('When the UAT is not registered', function() {
+            it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat grab not-a-uat'));
@@ -180,10 +180,10 @@ describe('UatBot', function() {
             });
         });
 
-        describe('When the UAT does not exist', function() {
-            it('says it is not a UAT', function(done) {
+        describe('When the UAT is not registered', function() {
+            it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat release not-a-uat'));
@@ -214,10 +214,10 @@ describe('UatBot', function() {
             });
         });
 
-        describe('When the UAT does not exist', function() {
-            it('says it is not a UAT', function(done) {
+        describe('When the UAT is not registered', function() {
+            it('says it does not know the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/I don't know anything about not-a-uat/);
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat steal not-a-uat'));

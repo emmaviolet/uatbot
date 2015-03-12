@@ -39,7 +39,7 @@ module.exports = function(robot) {
     } else if(uat in uatOwners) {
       msg.send(uatOwners[uat] + ' already has ' + uat);
     } else {
-      msg.send(uat + ' is not a UAT');
+      msg.send('I don\'t know anything about ' + uat);
     }
   });
 
@@ -53,7 +53,7 @@ module.exports = function(robot) {
     } else if(uat in uatOwners) {
       msg.send(uatOwners[uat] + ' currently has ' + uat);
     } else {
-      msg.send(uat + ' is not a UAT');
+      msg.send('I don\'t know anything about ' + uat);
     }
   });
 
@@ -63,7 +63,7 @@ module.exports = function(robot) {
       uatOwners[uat] = userName;
       msg.send(userName + ' has stolen ' + uat);
     } else {
-      msg.send(uat + ' is not a UAT');
+      msg.send('I don\'t know anything about ' + uat);
     }
   });
 
