@@ -1,36 +1,25 @@
 module.exports = function(robot) {
-  var uatNames = {
-    'Astroboy': '',
-    'Derbystallion': '',
-    'Donkeykong': '',
-    'Doubledragon': '',
-    'Galaga': '',
-    'Ghostbusters': '',
-    'Goldeneye': '',
-    'Kirby': '',
-    'Mariogolf': '',
-    'Metroid': '',
-    'Mickeymania': '',
-    'Mortalkombat': '',
-    'Pikmin': '',
-    'Quake': '',
-    'Starfox': '',
-    'Yoshi': '',
-    'Zelda': ''
-  }
+  var uatNames = [
+    'astroboy', 'derbystallion', 'donkeykong', 'doubledragon', 'galaga',
+    'ghostbusters', 'goldeneye', 'kirby', 'mariogolf', 'metroid', 'mickeymania',
+    'mortalkombat', 'pikmin', 'quake', 'starfox', 'yoshi', 'zelda'
+  ];
+
+  function arrayToHash(array) {
+    var hash = {};
+    for (var i = 0; i < array.length; i ++) {
+      hash[array[i]] = ''
+    };
+    return hash;
+  };
 
   function getUatOwners() {
     owners = robot.brain.get('uatOwners');
-    if(!owners) { robot.brain.set('uatOwners', uatNames) };
+    if(!owners) { robot.brain.set('uatOwners', arrayToHash(uatNames)) };
     return robot.brain.get('uatOwners');
-  }
-
-  function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   };
 
-  function uatName(msg) { return toTitleCase(msg.match[1]) };
-
+  function uatName(msg) { return (msg.match[1]).toLowerCase() };
   function uatFree() { return uat in uatOwners && uatOwners[uat] == '' };
   function uatOwnedByUser() { return uat in uatOwners && uatOwners[uat] == userName };
 
@@ -89,7 +78,7 @@ module.exports = function(robot) {
     }
 
     for(var i in uatQueries) {
-      uat = toTitleCase(uatQueries[i]);
+      uat = uatQueries[i].toLowerCase();
       uatList += uat + ': ' + uatOwners[uat] + '\n';
     };
     msg.send(uatList);

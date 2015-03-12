@@ -37,9 +37,9 @@ describe('UatBot', function() {
         robot.shutdown();
     });
 
-    it('retrieves a UAT name from a string and returns it in title case', function(done) {
+    it('retrieves a UAT name from a string and returns it in lower case', function(done) {
         adapter.on('send', function(envelope, strings) {
-            expect(strings[0]).match(/Goldeneye/);
+            expect(strings[0]).match(/goldeneye/);
             done();
         });
         adapter.receive(new TextMessage(user, 'uat grab goLDENEye'));
@@ -51,57 +51,57 @@ describe('UatBot', function() {
             describe('and the UAT is free', function() {
                 it('says the user has taken the UAT', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/TestUser has grabbed Goldeneye/);
+                        expect(strings[0]).match(/TestUser has grabbed goldeneye/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
                 });
 
                 it('assigns the user to the UAT', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
-                    expect(brain.get('uatOwners')['Goldeneye']).to.equal('TestUser');
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                    expect(brain.get('uatOwners')['goldeneye']).to.equal('TestUser');
                     done();
                 });
             });
 
             describe('and the user already has the UAT', function() {
                 beforeEach(function(done) {
-                    brain.set('uatOwners', {'Goldeneye': 'TestUser', 'Donkeykong': '', 'Starfox': ''})
+                    brain.set('uatOwners', {'goldeneye': 'TestUser', 'donkeykong': '', 'starfox': ''})
                     done();
                 });
 
                 it('says the user already has the UAT', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/You already have Goldeneye, TestUser/);
+                        expect(strings[0]).match(/You already have goldeneye, TestUser/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
                 });
 
                 it('does not change the UAT assignment', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
-                    expect(brain.get('uatOwners')['Goldeneye']).to.equal('TestUser');
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                    expect(brain.get('uatOwners')['goldeneye']).to.equal('TestUser');
                     done();
                 });
             });
 
             describe('and another user has the UAT', function() {
                 beforeEach(function(done) {
-                    brain.set('uatOwners', {'Goldeneye': 'AnotherUser', 'Donkeykong': '', 'Starfox': ''})
+                    brain.set('uatOwners', {'goldeneye': 'AnotherUser', 'donkeykong': '', 'starfox': ''})
                     done();
                 });
 
                 it('tells the user who has the UAT', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/AnotherUser already has Goldeneye/);
+                        expect(strings[0]).match(/AnotherUser already has goldeneye/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
                 });
 
                 it('does not change the UAT assignment', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat grab Goldeneye'));
-                    expect(brain.get('uatOwners')['Goldeneye']).to.equal('AnotherUser');
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                    expect(brain.get('uatOwners')['goldeneye']).to.equal('AnotherUser');
                     done();
                 });
             });
@@ -110,10 +110,10 @@ describe('UatBot', function() {
         describe('When the UAT does not exist', function() {
             it('says it is not a UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/not-a-uat is not a UAT/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat grab Not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat grab not-a-uat'));
             });
         });
     });
@@ -124,57 +124,57 @@ describe('UatBot', function() {
             describe('and the UAT is free', function() {
                 it('says the UAT is not in use', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/Starfox is not currently in use/);
+                        expect(strings[0]).match(/starfox is not currently in use/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
                 });
 
                 it('does not change the UAT assignment', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
-                    expect(brain.get('uatOwners')['Starfox']).to.equal('');
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                    expect(brain.get('uatOwners')['starfox']).to.equal('');
                     done();
                 });
             });
 
             describe('and the user has the UAT', function() {
                 beforeEach(function(done) {
-                    brain.set('uatOwners', {'Goldeneye': '', 'Donkeykong': '', 'Starfox': 'TestUser'})
+                    brain.set('uatOwners', {'goldeneye': '', 'donkeykong': '', 'starfox': 'TestUser'})
                     done();
                 });
 
                 it('says the user has released the UAT', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/TestUser has released Starfox/);
+                        expect(strings[0]).match(/TestUser has released starfox/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
                 });
 
                 it('removes the user from the UAT', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
-                    expect(brain.get('uatOwners')['Starfox']).to.equal('');
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                    expect(brain.get('uatOwners')['starfox']).to.equal('');
                     done();
                 });
             });
 
             describe('and another user has the UAT', function() {
                 beforeEach(function(done) {
-                    brain.set('uatOwners', {'Goldeneye': '', 'Donkeykong': '', 'Starfox': 'AnotherUser'})
+                    brain.set('uatOwners', {'goldeneye': '', 'donkeykong': '', 'starfox': 'AnotherUser'})
                     done();
                 });
 
                 it('tells the user who has the UAT', function(done) {
                     adapter.on('send', function(envelope, strings) {
-                        expect(strings[0]).match(/AnotherUser currently has Starfox/);
+                        expect(strings[0]).match(/AnotherUser currently has starfox/);
                         done();
                     });
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
                 });
 
                 it('does not change the UAT assignment', function(done) {
-                    adapter.receive(new TextMessage(user, 'uat release Starfox'));
-                    expect(brain.get('uatOwners')['Starfox']).to.equal('AnotherUser');
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                    expect(brain.get('uatOwners')['starfox']).to.equal('AnotherUser');
                     done();
                 });
             });
@@ -183,10 +183,10 @@ describe('UatBot', function() {
         describe('When the UAT does not exist', function() {
             it('says it is not a UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/not-a-uat is not a UAT/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat release Not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat release not-a-uat'));
             });
         });
     });
@@ -195,21 +195,21 @@ describe('UatBot', function() {
 
         describe('When the UAT exists', function() {
             beforeEach(function(done) {
-                brain.set('uatOwners', {'Goldeneye': '', 'Donkeykong': '', 'Starfox': 'AnotherUser'})
+                brain.set('uatOwners', {'goldeneye': '', 'donkeykong': '', 'starfox': 'AnotherUser'})
                 done();
             });
 
             it('says the user has stolen the UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/TestUser has stolen Starfox/);
+                    expect(strings[0]).match(/TestUser has stolen starfox/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat steal Starfox'));
+                adapter.receive(new TextMessage(user, 'uat steal starfox'));
             });
 
             it('assigns the user to the UAT', function(done) {
-                adapter.receive(new TextMessage(user, 'uat steal Starfox'));
-                expect(brain.get('uatOwners')['Starfox']).to.equal('TestUser');
+                adapter.receive(new TextMessage(user, 'uat steal starfox'));
+                expect(brain.get('uatOwners')['starfox']).to.equal('TestUser');
                 done();
             });
         });
@@ -217,24 +217,24 @@ describe('UatBot', function() {
         describe('When the UAT does not exist', function() {
             it('says it is not a UAT', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Not-a-uat is not a UAT/);
+                    expect(strings[0]).match(/not-a-uat is not a UAT/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat steal Not-a-uat'));
+                adapter.receive(new TextMessage(user, 'uat steal not-a-uat'));
             });
         });
     });
 
     describe('uat status', function() {
         beforeEach(function(done) {
-            brain.set('uatOwners', {'Goldeneye': 'Test1', 'Donkeykong': 'Test2', 'Starfox': 'Test3'})
+            brain.set('uatOwners', {'goldeneye': 'Test1', 'donkeykong': 'Test2', 'starfox': 'Test3'})
             done();
         });
 
         describe('uat status all', function() {
             it('lists all the UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Goldeneye: Test1\nDonkeykong: Test2\nStarfox: Test3/);
+                    expect(strings[0]).match(/goldeneye: Test1\ndonkeykong: Test2\nstarfox: Test3/);
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat status all'));
@@ -245,19 +245,19 @@ describe('UatBot', function() {
         describe('uat status <uat>', function() {
             it('lists the given UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Goldeneye: Test1\nStarfox: Test3/);
+                    expect(strings[0]).match(/goldeneye: Test1\nstarfox: Test3/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat status Goldeneye Starfox'));
+                adapter.receive(new TextMessage(user, 'uat status goldeneye starfox'));
                 done();
             });
 
             it('strips out commas and white space', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Starfox: Test3\nDonkeykong: Test2/);
+                    expect(strings[0]).match(/starfox: Test3\ndonkeykong: Test2/);
                     done();
                 });
-                adapter.receive(new TextMessage(user, 'uat status Starfox, Donkeykong'));
+                adapter.receive(new TextMessage(user, 'uat status starfox, donkeykong'));
                 done();
             })
         })
