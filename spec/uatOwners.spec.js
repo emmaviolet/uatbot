@@ -229,26 +229,60 @@ describe('uatOwners', function() {
         beforeEach(function(done) {
             brain.set('uatOwners', {
                 'astroboy': 'Test1', 'derbystallion': 'Test2', 'donkeykong': '', 'doubledragon': '', 'galaga': '', 'ghostbusters': '',
-                'goldeneye': '','iceclimber': '', 'kirby': '', 'mariogolf': '', 'metroid': '', 'mickeymania': 'Test3',
+                'goldeneye': '','iceclimber': '','kirby': 'Test3', 'mariogolf': '', 'metroid': '', 'mickeymania': 'Test4',
                 'mortalkombat': '', 'pikmin': '', 'quake': '', 'starfox': '', 'streetfighter': '', 'yoshi': '', 'zelda': ''
             })
             done();
+        });
+
+        describe('uat status', function() {
+            describe('when default UATs have been set', function() {
+                beforeEach(function(done) {
+                    brain.set('roomSettings', {'#testroom': ['goldeneye', 'kirby'] });
+                    done();
+                })
+                it('lists the default UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/goldeneye: \nkirby: Test3/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status'));
+                    done();
+                });
+            });
+
+            describe('when default UATs have not been set', function() {
+                it('lists all the UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).to.equal(
+                            'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \n' +
+                            'doubledragon: \ngalaga: \nghostbusters: \ngoldeneye: \nkirby: ' +
+                            'Test3\n mariogolf: undefined\nmetroid: \nmickeymania: Test4\n' +
+                            'mortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n'
+                        );
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status'));
+                    done();
+                });
+            });
         });
 
         describe('uat status all', function() {
             it('lists all the UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
                     expect(strings[0]).to.equal(
-                        'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \ngalaga: \n' +
-                        'ghostbusters: \ngoldeneye: \niceclimber: \nkirby: \nmariogolf: \nmetroid: \nmickeymania: ' +
-                        'Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
+                        'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \n' +
+                        'galaga: \nghostbusters: \ngoldeneye: \niceclimber: \nkirby: Test3\n' +
+                        'mariogolf: \nmetroid: \nmickeymania: Test4\nmortalkombat: \n' +
+                        'pikmin: \nquake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
                     );
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat status all'));
                 done();
             });
-        })
+        });
 
         describe('uat status <uat>', function() {
             it('lists the given UATs and their owners', function(done) {
@@ -267,8 +301,72 @@ describe('uatOwners', function() {
                 });
                 adapter.receive(new TextMessage(user, 'uat status starfox, derbystallion'));
                 done();
-            })
-        })
+            });
+        });
+    });
+
+    describe('uat default <uat>', function() {
+        describe('when no settings are assigned to the room', function() {
+            it('creates settings for the room', function(done) {
+                adapter.receive(new TextMessage(user, 'uat default yoshi, zelda'));
+                expect(brain.get('roomSettings')['#testroom']).to.not.be.undefined;
+                done();
+            });
+
+            it('assigns the uats to the room', function(done) {
+                adapter.receive(new TextMessage(user, 'uat default yoshi, zelda'));
+                expect(brain.get('roomSettings')['#testroom']['uat']).to.include('yoshi');
+                expect(brain.get('roomSettings')['#testroom']['uat']).to.include('zelda');
+                done();
+            });
+
+            it('sends the default UAT settings to the room', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/Default UATs for #testroom are now: yoshi zelda/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat default yoshi, zelda'));
+            });
+        });
+        describe('when settings are already assigned to the room', function() {
+            beforeEach(function(done) {
+                brain.set('roomSettings', {
+                    '#testroom': {
+                        'uat': [ 'goldeneye', 'derbystallion' ],
+                        'other': 'test-value'
+                    }
+                });
+                done();
+            });
+
+            it('does not replace other room settings', function(done) {
+                adapter.receive(new TextMessage(user, 'uat default pikmin, metroid'));
+                expect(brain.get('roomSettings')['#testroom']['other']).to.equal('test-value');
+                done();
+            });
+
+            it('assigns the uats to the room', function(done) {
+                adapter.receive(new TextMessage(user, 'uat default pikmin, metroid'));
+                expect(brain.get('roomSettings')['#testroom']['uat']).to.include('pikmin');
+                expect(brain.get('roomSettings')['#testroom']['uat']).to.include('metroid');
+                done();
+            });
+
+            it('replaces previous defaults', function(done) {
+                adapter.receive(new TextMessage(user, 'uat default pikmin, metroid'));
+                expect(brain.get('roomSettings')['#testroom']['uat']).not.to.include('goldeneye');
+                expect(brain.get('roomSettings')['#testroom']['uat']).not.to.include('derbystallion');
+                done();
+            });
+
+            it('sends the default UAT settings to the room', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/Default UATs for #testroom are now: pikmin metroid/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat default pikmin, metroid'));
+            });
+        });
     });
 });
 
