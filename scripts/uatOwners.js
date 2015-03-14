@@ -28,8 +28,7 @@ module.exports = function(robot) {
   };
 
   function getUatOwners() {
-    var owners = robot.brain.get('uatOwners');
-    if(!owners) { robot.brain.set('uatOwners', arrayToHash(uatNames)) };
+    if(!robot.brain.get('uatOwners')) { robot.brain.set('uatOwners', arrayToHash(uatNames)) };
     return robot.brain.get('uatOwners');
   };
 
@@ -85,8 +84,8 @@ module.exports = function(robot) {
     uatOwners = getUatOwners();
     var uatList = '';
 
-    if (msg.match[1] === 'all') { uatQueries = uatNames }
-    else { uatQueries = msg.match[1].split(/[ ,]+/) }
+    if (msg.match[1] === 'all') { var uatQueries = uatNames }
+    else { var uatQueries = msg.match[1].split(/[ ,]+/) }
 
     for (var i in uatQueries) {
       uat = uatQueries[i].toLowerCase();

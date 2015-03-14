@@ -238,7 +238,11 @@ describe('uatOwners', function() {
         describe('uat status all', function() {
             it('lists all the UATs and their owners', function(done) {
                 adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \ngalaga: \nghostbusters: \ngoldeneye: \nkirby: \n mariogolf: undefined\nmetroid: \nmickeymania: Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n/);
+                    expect(strings[0]).to.equal(
+                        'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \ngalaga: \n' +
+                        'ghostbusters: \ngoldeneye: \nkirby: \nmariogolf: \nmetroid: \nmickeymania: ' +
+                        'Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n'
+                    );
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'uat status all'));
