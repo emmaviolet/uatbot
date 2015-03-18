@@ -228,9 +228,9 @@ describe('uatOwners', function() {
     describe('uat status', function() {
         beforeEach(function(done) {
             brain.set('uatOwners', {
-                'astroboy': 'Test1', 'derbystallion': 'Test2', 'donkeykong': '', 'doubledragon': '', 'galaga': '',
-                'ghostbusters': '','goldeneye': '','kirby': '', 'mariogolf': '', 'metroid': '', 'mickeymania': 'Test3',
-                'mortalkombat': '', 'pikmin': '', 'quake': '', 'starfox': '', 'yoshi': '', 'zelda': ''
+                'astroboy': 'Test1', 'derbystallion': 'Test2', 'donkeykong': '', 'doubledragon': '', 'galaga': '', 'ghostbusters': '',
+                'goldeneye': '','iceclimber': '', 'kirby': '', 'mariogolf': '', 'metroid': '', 'mickeymania': 'Test3',
+                'mortalkombat': '', 'pikmin': '', 'quake': '', 'starfox': '', 'streetfighter': '', 'yoshi': '', 'zelda': ''
             })
             done();
         });
@@ -240,8 +240,8 @@ describe('uatOwners', function() {
                 adapter.on('send', function(envelope, strings) {
                     expect(strings[0]).to.equal(
                         'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \ngalaga: \n' +
-                        'ghostbusters: \ngoldeneye: \nkirby: \nmariogolf: \nmetroid: \nmickeymania: ' +
-                        'Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n'
+                        'ghostbusters: \ngoldeneye: \niceclimber: \nkirby: \nmariogolf: \nmetroid: \nmickeymania: ' +
+                        'Test3\nmortalkombat: \npikmin: \nquake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
                     );
                     done();
                 });

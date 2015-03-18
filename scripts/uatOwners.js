@@ -14,9 +14,9 @@
 module.exports = function(robot) {
   var uatOwners;
   var uatNames = [
-    'astroboy', 'derbystallion', 'donkeykong', 'doubledragon', 'galaga',
-    'ghostbusters', 'goldeneye', 'kirby', 'mariogolf', 'metroid', 'mickeymania',
-    'mortalkombat', 'pikmin', 'quake', 'starfox', 'yoshi', 'zelda'
+    'astroboy', 'derbystallion', 'donkeykong', 'doubledragon', 'galaga', 'ghostbusters',
+    'goldeneye', 'iceclimber', 'kirby', 'mariogolf', 'metroid', 'mickeymania', 'mortalkombat',
+    'pikmin', 'quake', 'starfox', 'streetfighter', 'yoshi', 'zelda'
   ];
 
   function arrayToHash(array) {
