@@ -1,9 +1,9 @@
 {
-  "name": "UATBot",
+  "name": "Hubot",
   "version": "0.0.0",
   "private": true,
   "author": "Emma Makinson <emma.makinson@fundingcircle.com>",
-  "description": "A robot to help you manage your UATs",
+  "description": "The Funding Circle Hubot",
   "dependencies": {
     "hubot": "^2.11.1",
     "hubot-diagnostics": "0.0.1",
@@ -20,7 +20,19 @@
     "hubot-shipit": "^0.1.2",
     "hubot-youtube": "^0.1.2"
   },
+  "devDependencies": {
+    "coffee-script": "~1.6.3",
+    "chai": "~1.9.0",
+    "hubot-mock-adapter": "~1.0.0",
+    "mocha": "~1.17.1",
+    "jasmine-node": "1.14.5",
+    "sinon": "~1.9.0"
+  },
   "engines": {
     "node": "0.10.x"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/jasmine-node --coffee --color spec/"
   }
 }
+
