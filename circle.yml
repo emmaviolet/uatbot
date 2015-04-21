@@ -1,0 +1,6 @@
+dependencies:
+  post:
+    - npm install -g jshint
+test:
+  pre:
+    - jshint *.json
