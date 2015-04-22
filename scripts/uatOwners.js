@@ -44,6 +44,18 @@ module.exports = function(robot) {
   function uatFree(uat) { return uat in uatOwners && uatOwners[uat] === '' };
   function uatOwnedByUser(uat, user) { return uat in uatOwners && uatOwners[uat] === user };
 
+  robot.hear(/uat help/, function(msg) {
+      msg.send(
+        'uat grab <uat>     - allocates the user to the UAT if the UAT is available\n' +
+        'uat release <uat>  - removes the user from the UAT\n' +
+        'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available\n' +
+        'uat status         - returns all the default UAT names and the name of the person currrently allocated to them\n' +
+        'uat status <uat>   - returns the status of all listed UATs; multiple UAT names can be separated by commas or spaces\n' +
+        'uat status all     - returns the status of all known UATs\n' +
+        'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces\n'
+      );
+  });
+
   robot.hear(/uat grab (\w+)/, function(msg) {
     uatOwners = getUatOwners();
     var uat = uatName(msg);
