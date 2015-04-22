@@ -1,4 +1,8 @@
 var chai = require('chai');
+var sinon = require("sinon");
+var sinonChai = require("sinon-chai");
+chai.use(sinonChai);
+
 var should = chai.should(), expect = chai.expect;
 
 var path   = require('path');
@@ -8,10 +12,7 @@ var TextMessage = require('hubot/src/message').TextMessage;
 // The below to be refactored on a future turn
 
 describe('uatOwners', function() {
-    var robot;
-    var user;
-    var adapter;
-    var brain;
+    var adapter, brain, robot, spy, user;
 
     beforeEach(function(done) {
         // create new robot, without http, using the mock adapter
@@ -27,6 +28,7 @@ describe('uatOwners', function() {
             });
 
             adapter = robot.adapter;
+            spy = sinon.spy(adapter, 'send');
             brain = robot.brain;
             done();
         });
@@ -34,6 +36,7 @@ describe('uatOwners', function() {
         robot.run();
     });
     afterEach(function() {
+        spy.should.have.been.called;
         robot.shutdown();
     });
 
@@ -43,6 +46,24 @@ describe('uatOwners', function() {
             done();
         });
         adapter.receive(new TextMessage(user, 'uat grab goLDENEye'));
+    });
+
+    describe('uat help', function() {
+        it('describes all hubot uat functions', function(done) {
+            adapter.on('send', function(envelope, strings) {
+                expect(strings[0]).to.equal(
+                    'uat grab <uat>     - allocates the user to the UAT if the UAT is available\n' +
+                    'uat release <uat>  - removes the user from the UAT\n' +
+                    'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available\n' +
+                    'uat status         - returns all the default UAT names and the name of the person currrently allocated to them\n' +
+                    'uat status <uat>   - returns the status of all listed UATs; multiple UAT names can be separated by commas or spaces\n' +
+                    'uat status all     - returns the status of all known UATs\n' +
+                    'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces\n'
+                );
+                done();
+            });
+            adapter.receive(new TextMessage(user, 'uat help'));
+        })
     });
 
     describe('uat grab <uat>', function() {
