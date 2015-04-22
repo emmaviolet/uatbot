@@ -238,7 +238,7 @@ describe('uatOwners', function() {
         describe('uat status', function() {
             describe('when default UATs have been set', function() {
                 beforeEach(function(done) {
-                    brain.set('roomSettings', {'#testroom': ['goldeneye', 'kirby'] });
+                    brain.set('roomSettings', {'#testroom': {'uat': ['goldeneye', 'kirby'] }});
                     done();
                 })
                 it('lists the default UATs and their owners', function(done) {
@@ -255,10 +255,10 @@ describe('uatOwners', function() {
                 it('lists all the UATs and their owners', function(done) {
                     adapter.on('send', function(envelope, strings) {
                         expect(strings[0]).to.equal(
-                            'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \n' +
-                            'doubledragon: \ngalaga: \nghostbusters: \ngoldeneye: \nkirby: ' +
-                            'Test3\nmariogolf: \nmetroid: \nmickeymania: Test4\n' +
-                            'mortalkombat: \npikmin: \nquake: \nstarfox: \nyoshi: \nzelda: \n'
+                            'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \n' +
+                            'galaga: \nghostbusters: \ngoldeneye: \niceclimber: \nkirby: Test3\n' +
+                            'mariogolf: \nmetroid: \nmickeymania: Test4\nmortalkombat: \npikmin: \n' +
+                            'quake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
                         );
                         done();
                     });
