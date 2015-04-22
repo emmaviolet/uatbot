@@ -88,14 +88,16 @@ module.exports = function(robot) {
     }
   });
 
-  robot.hear(/uat status([\w\s,]+)/, function(msg) {
+  robot.hear(/uat status([\w\s,]*)/, function(msg) {
     uatOwners = getUatOwners();
     var room = msg.envelope.user.room;
     var roomSettings = getRoomSettings();
     var uatList = '';
 
     if (msg.match[1] === ' all') { var uatQueries = uatNames }
-    else { var uatQueries = msg.match[1].split(/[ ,]+/) }
+    else if (msg.match[1] === '') {
+      var uatQueries = (roomSettings[room] && roomSettings[room]['uat']) || uatNames
+    } else { var uatQueries = msg.match[1].split(/[ ,]+/) }
 
     for (var i in uatQueries) {
       uat = uatQueries[i].toLowerCase();
