@@ -456,6 +456,21 @@ describe('deployQueue', function() {
             });
         });
 
+        describe('When there are no scheduled users to deploy', function() {
+            beforeEach(function(done) {
+                brain.set('deployQueue', {'alpaca': []});
+                done();
+            });
+
+            it('says there are no scheduled users to deploy the application', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/There are no scheduled users to deploy/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'deploy next alpaca'));
+            });
+        });
+
         it('says the next user to deploy the application', function(done) {
             adapter.on('send', function(envelope, strings) {
                 expect(strings[0]).match(/Next user to deploy alpaca: OtherTestUser/);
@@ -487,6 +502,36 @@ describe('deployQueue', function() {
                     done();
                 });
                 adapter.receive(new TextMessage(user, 'deploy status unregistered_application'));
+            });
+        });
+
+        describe('When there are no scheduled users to the deploy the application', function(done) {
+            beforeEach(function(done) {
+                brain.set('deployQueue', {'alpaca': []});
+                done();
+            });
+
+            it('says there are no scheduled users to deploy the application', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/There are no scheduled users to deploy alpaca/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'deploy status alpaca'));
+            });
+        });
+
+        describe('When there is no ongoing deploy for the application', function(done) {
+            beforeEach(function(done) {
+                brain.set('onGoingDeploys', {'alpaca': null, 'bilcas': 'SomeOtherUser'});
+                done();
+            });
+
+            it('says there is no ongoing deploy for the application', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/There is no ongoing deploy for alpaca/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'deploy status alpaca'));
             });
         });
 

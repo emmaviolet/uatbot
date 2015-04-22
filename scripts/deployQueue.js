@@ -226,6 +226,12 @@ module.exports = function(robot) {
       return 0;
     }
 
+    var nextUser = nextUserToDeploy(application);
+    if(nextUser === undefined){
+      msg.send('There are no scheduled users to deploy');
+      return 0;
+    }
+
     msg.send('Next user to deploy ' + application + ': ' + nextUserToDeploy(application));
   });
 
@@ -240,10 +246,27 @@ module.exports = function(robot) {
       return 0;
     }
 
-    scheduledUsers='';
-    for (var i in applicationQueue) {
-      scheduledUsers += applicationQueue[i] + '\n';
-    };
-    msg.send('Scheduled users to deploy for ' + application + ':\n' + scheduledUsers + '\nOngoing deploy started by ' + nextUserToDeploy(application) + ' for ' + application);
+    var applicationQueueStatus;
+    if(applicationQueue.length === 0){
+      applicationQueueStatus  = 'There are no scheduled users to deploy ' + application;
+    }
+    else {
+      var scheduledUsers='';
+      for (var i in applicationQueue) {
+        scheduledUsers += applicationQueue[i] + '\n';
+      };
+      applicationQueueStatus = 'Scheduled users to deploy for ' + application + ':\n' + scheduledUsers;
+    }
+
+    var onGoingDeployStatus = '';
+    var onGoingDeployUser = getOnGoingDeploy(application);
+    if(onGoingDeployUser === null){
+      onGoingDeployStatus = 'There is no ongoing deploy for ' + application;
+    }
+    else {
+      onGoingDeployStatus = 'Ongoing deploy started by ' + onGoingDeployUser + ' for ' + application;
+    }
+
+    msg.send(applicationQueueStatus + '\n' + onGoingDeployStatus);
   });
 };
