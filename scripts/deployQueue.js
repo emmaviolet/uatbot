@@ -91,7 +91,7 @@ module.exports = function(robot) {
     return deployQueue[application][0];
   }
 
-  robot.hear(/deploy schedule (\w+)/, function(msg) {
+  robot.hear(/deploy schedule ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -112,7 +112,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.hear(/deploy unschedule (\w+)/, function(msg) {
+  robot.hear(/deploy unschedule ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -133,7 +133,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.hear(/deploy start (\w+)/, function(msg) {
+  robot.hear(/deploy start ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -163,7 +163,7 @@ module.exports = function(robot) {
     msg.send('You are now the active deploy user for ' + application);
   });
 
-  robot.hear(/deploy complete (\w+)/, function(msg) {
+  robot.hear(/deploy complete ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -189,7 +189,7 @@ module.exports = function(robot) {
     msg.send('Your deploy is now complete for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
   });
 
-  robot.hear(/deploy cancel (\w+)/, function(msg) {
+  robot.hear(/deploy cancel ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -215,7 +215,7 @@ module.exports = function(robot) {
     msg.send('Your deploy is now cancelled for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
   });
 
-  robot.hear(/deploy next (\w+)/, function(msg) {
+  robot.hear(/deploy next ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
@@ -235,7 +235,7 @@ module.exports = function(robot) {
     msg.send('Next user to deploy ' + application + ': ' + nextUserToDeploy(application));
   });
 
-  robot.hear(/deploy status (\w+)/, function(msg) {
+  robot.hear(/deploy status ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
     var application = applicationName(msg);
     var user = msg.envelope.user.name;
