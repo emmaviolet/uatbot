@@ -45,7 +45,7 @@ module.exports = function(robot) {
   function uatOwnedByUser(uat, user) { return uat in uatOwners && uatOwners[uat] === user };
 
   robot.hear(/uat help/, function(msg) {
-      msg.emote(
+      msg.send(
         'uat grab <uat>     - allocates the user to the UAT if the UAT is available\n' +
         'uat release <uat>  - removes the user from the UAT\n' +
         'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available\n' +
