@@ -1,20 +1,18 @@
-// Description:
-// deployQueue manages the queue for all application deploys.
-
-// Commands:
-// deploy schedule <application>   - schedules a deploy for an application
-// deploy unschedule <application> - cancel deploy schedule for an application
-// deploy start <application>      - starts a deploy for an application
-// deploy cancel <application>     - cancels a deploy for an application
-// deploy complete <application>   - completes the application deploy and removes the user from the deployment queue
-// deploy next <application>       - return the first user in the deployment queue for the given application
-// deploy status <application>     - returns all the users in the deployment queue for the given application
-
-// Author:
-// @lostie
+/**
+* @description deployQueue manages the queue for all application deploys.
+*
+* @command deploy schedule <application>   - schedules a deploy for an application
+* @command deploy unschedule <application> - cancel deploy schedule for an application
+* @command deploy start <application>      - starts a deploy for an application
+* @command deploy cancel <application>     - cancels a deploy for an application
+* @command deploy complete <application>   - completes the application deploy and removes the user from the deployment queue
+* @command deploy next <application>       - return the first user in the deployment queue for the given application
+* @command deploy status <application>     - returns all the users in the deployment queue for the given application
+*
+* @author @lostie
+*/
 
 module.exports = function(robot) {
-  var roomSettings;
   var applications = [
     'alpaca',
     'bank-pool',
@@ -36,7 +34,8 @@ module.exports = function(robot) {
     'uk-gateway',
     'wall-e'
   ];
-  var onGoingDeploys;
+  var comments = require('parse-comments'), fs = require('fs');
+  var onGoingDeploys, roomSettings;
 
   function arrayToHash(array) {
     var hash = {};
@@ -92,15 +91,9 @@ module.exports = function(robot) {
   }
 
   robot.hear(/deploy help/, function (msg) {
-      msg.send(
-          'deploy schedule <application>   - schedules a deploy for an application\n' +
-          'deploy unschedule <application> - cancel deploy schedule for an application\n' +
-          'deploy start <application>      - starts a deploy for an application\n' +
-          'deploy cancel <application>     - cancels a deploy for an application\n' +
-          'deploy complete <application>   - completes the application deploy and removes the user from the deployment queue\n' +
-          'deploy next <application>       - return the first user in the deployment queue for the given application\n' +
-          'deploy status <application>     - returns all the users in the deployment queue for the given application\n'
-      );
+    var file = fs.readFileSync('scripts/deployQueue.js', 'utf8');
+    var commands = comments(file)[0].command;
+    msg.send(commands.join('\n'));
   });
 
   robot.hear(/deploy schedule ([\w-]+)/, function(msg) {
