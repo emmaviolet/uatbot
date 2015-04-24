@@ -48,6 +48,24 @@ describe('deployQueue', function() {
         robot.shutdown();
     });
 
+    describe('deploy help', function () {
+        it('describes all hubot deploy queue functions', function (done) {
+            adapter.on('send', function(envelope, strings) {
+                expect(strings[0]).to.equal(
+                    'deploy schedule <application>   - schedules a deploy for an application\n' +
+                    'deploy unschedule <application> - cancel deploy schedule for an application\n' +
+                    'deploy start <application>      - starts a deploy for an application\n' +
+                    'deploy cancel <application>     - cancels a deploy for an application\n' +
+                    'deploy complete <application>   - completes the application deploy and removes the user from the deployment queue\n' +
+                    'deploy next <application>       - return the first user in the deployment queue for the given application\n' +
+                    'deploy status <application>     - returns all the users in the deployment queue for the given application\n'
+                );
+                done();
+            });
+            adapter.receive(new TextMessage(user, 'deploy help'));
+        });
+    });
+
     var syntaxCheck = function(command) {
       describe('syntax check for ' + command, function() {
         it('retrieves an application name from a string and returns it in lower case', function(done) {

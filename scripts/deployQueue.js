@@ -7,7 +7,7 @@
 // deploy start <application>      - starts a deploy for an application
 // deploy cancel <application>     - cancels a deploy for an application
 // deploy complete <application>   - completes the application deploy and removes the user from the deployment queue
-// deploy next <application>  - return the first user in the deployment queue for the given application
+// deploy next <application>       - return the first user in the deployment queue for the given application
 // deploy status <application>     - returns all the users in the deployment queue for the given application
 
 // Author:
@@ -90,6 +90,18 @@ module.exports = function(robot) {
     deployQueue = getDeployQueue();
     return deployQueue[application][0];
   }
+
+  robot.hear(/deploy help/, function (msg) {
+      msg.send(
+          'deploy schedule <application>   - schedules a deploy for an application\n' +
+          'deploy unschedule <application> - cancel deploy schedule for an application\n' +
+          'deploy start <application>      - starts a deploy for an application\n' +
+          'deploy cancel <application>     - cancels a deploy for an application\n' +
+          'deploy complete <application>   - completes the application deploy and removes the user from the deployment queue\n' +
+          'deploy next <application>       - return the first user in the deployment queue for the given application\n' +
+          'deploy status <application>     - returns all the users in the deployment queue for the given application\n'
+      );
+  });
 
   robot.hear(/deploy schedule ([\w-]+)/, function(msg) {
     deployQueue = getDeployQueue();
