@@ -48,13 +48,14 @@ describe('deployQueue', function() {
         robot.shutdown();
     });
 
-    describe('deploy schedule <application>', function() {
+    var syntaxCheck = function(command) {
+      describe('syntax check for ' + command, function() {
         it('retrieves an application name from a string and returns it in lower case', function(done) {
             adapter.on('send', function(envelope, strings) {
                 expect(strings[0]).match(/alpaca/);
                 done();
             });
-            adapter.receive(new TextMessage(user, 'deploy schedule aLPaca'));
+            adapter.receive(new TextMessage(user, 'deploy ' + command + ' aLPaca'));
         });
 
         it('correctly parses application names containing dashes', function (done) {
@@ -62,7 +63,7 @@ describe('deployQueue', function() {
                 expect(strings[0]).match(/uk-gateway/);
                 done();
             });
-            adapter.receive(new TextMessage(user, 'deploy schedule uk-gateway'));
+            adapter.receive(new TextMessage(user, 'deploy ' + command + ' uk-gateway'));
         });
 
         describe('When the application is not registered', function() {
@@ -74,7 +75,12 @@ describe('deployQueue', function() {
                 adapter.receive(new TextMessage(user, 'deploy schedule unregistered_application'));
             });
         });
+      });
+    };
 
+    ['schedule', 'unschedule', 'start', 'cancel', 'complete', 'status'].forEach(syntaxCheck);
+
+    describe('deploy schedule <application>', function() {
         describe('When user is first to deploy', function() {
             it('says the user is next to deploy', function(done) {
                 adapter.on('send', function(envelope, strings) {
@@ -114,32 +120,6 @@ describe('deployQueue', function() {
     });
 
     describe('deploy unschedule <application>', function() {
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy unschedule aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy unschedule uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy unschedule unregistered_application'));
-            });
-        });
-
         describe('When user has no deploys scheduled for the application', function() {
             beforeEach(function(done) {
                 brain.set('deployQueue', {'alpaca': ['OtherTestUser', 'SomeOtherTestUser']})
@@ -187,32 +167,6 @@ describe('deployQueue', function() {
         beforeEach(function(done) {
             brain.set('deployQueue', {'alpaca': ['TestUser', 'OtherTestUser', 'SomeOtherTestUser']})
             done();
-        });
-
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy start aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy start uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy start unregistered_application'));
-            });
         });
 
         describe('When there is an ongoing deploy', function() {
@@ -305,32 +259,6 @@ describe('deployQueue', function() {
             done();
         });
 
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy complete aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy complete uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy complete unregistered_application'));
-            });
-        });
-
         describe('When there is no ongoing deploy', function() {
             it('says there is no ongoing deploy for the application', function(done) {
                 adapter.on('send', function(envelope, strings) {
@@ -389,32 +317,6 @@ describe('deployQueue', function() {
         beforeEach(function(done) {
             brain.set('deployQueue', {'alpaca': ['TestUser', 'OtherTestUser', 'SomeOtherTestUser']})
             done();
-        });
-
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy cancel aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy cancel uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy cancel unregistered_application'));
-            });
         });
 
         describe('When there is no ongoing deploy', function() {
@@ -477,31 +379,7 @@ describe('deployQueue', function() {
             done();
         });
 
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy next aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy next uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy next unregistered_application'));
-            });
-        });
+        syntaxCheck('next');
 
         describe('When there are no scheduled users to deploy', function() {
             beforeEach(function(done) {
@@ -532,32 +410,6 @@ describe('deployQueue', function() {
             brain.set('deployQueue', {'alpaca': ['OtherTestUser', 'TestUser', 'SomeOtherTestUser']})
             brain.set('onGoingDeploys', {'alpaca': 'OtherTestUser', 'bilcas': null});
             done();
-        });
-
-        it('retrieves an application name from a string and returns it in lower case', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/alpaca/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy status aLPaca'));
-        });
-
-        it('correctly parses application names containing dashes', function (done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/uk-gateway/);
-                done();
-            });
-            adapter.receive(new TextMessage(user, 'deploy status uk-gateway'));
-        });
-
-        describe('When the application is not registered', function() {
-            it('says it does not know the application', function(done) {
-                adapter.on('send', function(envelope, strings) {
-                    expect(strings[0]).match(/Application unregistered_application is not registered for deploy management/);
-                    done();
-                });
-                adapter.receive(new TextMessage(user, 'deploy status unregistered_application'));
-            });
         });
 
         describe('When there are no scheduled users to the deploy the application', function(done) {
@@ -607,4 +459,3 @@ describe('deployQueue', function() {
         });
     });
 });
-
