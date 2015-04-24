@@ -45,7 +45,7 @@ module.exports = function(robot) {
   function uatOwnedByUser(uat, user) { return uat in uatOwners && uatOwners[uat] === user };
 
   robot.hear(/uat help/, function(msg) {
-      msg.send(
+      msg.emote(
         'uat grab <uat>     - allocates the user to the UAT if the UAT is available\n' +
         'uat release <uat>  - removes the user from the UAT\n' +
         'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available\n' +
@@ -62,13 +62,13 @@ module.exports = function(robot) {
     var user = msg.envelope.user.name;
     if (uatFree(uat)) {
       uatOwners[uat] = user;
-      msg.send(user + ' has grabbed ' + uat);
+      msg.emote(user + ' has grabbed ' + uat);
     } else if (uatOwnedByUser(uat, user)) {
-      msg.send('You already have ' + uat + ', ' + user);
+      msg.emote('You already have ' + uat + ', ' + user);
     } else if (uat in uatOwners) {
-      msg.send(uatOwners[uat] + ' already has ' + uat);
+      msg.emote(uatOwners[uat] + ' already has ' + uat);
     } else {
-      msg.send('I don\'t know anything about ' + uat);
+      msg.emote('I don\'t know anything about ' + uat);
     }
   });
 
@@ -77,14 +77,14 @@ module.exports = function(robot) {
     var uat = uatName(msg);
     var user = msg.envelope.user.name;
     if (uatFree(uat)) {
-      msg.send(uat + ' is not currently in use')
+      msg.emote(uat + ' is not currently in use')
     } else if(uatOwnedByUser(uat, user)) {
       uatOwners[uat] = '';
-      msg.send(user + ' has released ' + uat);
+      msg.emote(user + ' has released ' + uat);
     } else if (uat in uatOwners) {
-      msg.send(uatOwners[uat] + ' currently has ' + uat);
+      msg.emote(uatOwners[uat] + ' currently has ' + uat);
     } else {
-      msg.send('I don\'t know anything about ' + uat);
+      msg.emote('I don\'t know anything about ' + uat);
     }
   });
 
@@ -94,9 +94,9 @@ module.exports = function(robot) {
     var user = msg.envelope.user.name;
     if (uat in uatOwners) {
       uatOwners[uat] = user;
-      msg.send(user + ' has stolen ' + uat);
+      msg.emote(user + ' has stolen ' + uat);
     } else {
-      msg.send('I don\'t know anything about ' + uat);
+      msg.emote('I don\'t know anything about ' + uat);
     }
   });
 
@@ -117,8 +117,8 @@ module.exports = function(robot) {
         uatList += uat + ': ' + uatOwners[uat] + '\n';
       };
     };
-    if (uatList == '') { msg.send('I don\'t know anything about those UATs')}
-    else { msg.send(uatList) }
+    if (uatList == '') { msg.emote('I don\'t know anything about those UATs')}
+    else { msg.emote(uatList) }
   });
 
   robot.hear(/uat default ([\w\s,]+)/, function(msg) {
@@ -139,7 +139,7 @@ module.exports = function(robot) {
       uat = roomSettings[room]['uat'][i].toLowerCase();
       uatMessage += ' ' + uat;
     };
-    msg.send(uatMessage);
+    msg.emote(uatMessage);
   });
 
 }

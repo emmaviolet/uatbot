@@ -98,17 +98,17 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     applicationQueue.push(user);
 
     if(userIsFirstToDeploy(user, application)){
-      msg.send('You are next to deploy ' + application + '. Check for ongoing deploys before starting yours.');
+      msg.emote('You are next to deploy ' + application + '. Check for ongoing deploys before starting yours.');
     }
     else {
-      msg.send('Deploy scheduled for ' + application + '. Check status of queue.');
+      msg.emote('Deploy scheduled for ' + application + '. Check status of queue.');
     }
   });
 
@@ -119,17 +119,17 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     index = applicationQueue.indexOf(user);
     if(index == -1){
-      msg.send('You have no scheduled deploys for ' + application);
+      msg.emote('You have no scheduled deploys for ' + application);
     }
     else {
       applicationQueue.splice(index, 1);
-      msg.send('Your scheduled deploy was cancelled for ' + application);
+      msg.emote('Your scheduled deploy was cancelled for ' + application);
     }
   });
 
@@ -140,13 +140,13 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     activeDeployUser = getOnGoingDeploy(application);
     if(activeDeployUser !== null){
-      msg.send('You cannot start a deploy when there is an ongoing deploy for ' + application + ' by ' + activeDeployUser);
+      msg.emote('You cannot start a deploy when there is an ongoing deploy for ' + application + ' by ' + activeDeployUser);
       return 0;
     }
 
@@ -154,13 +154,13 @@ module.exports = function(robot) {
     deployUser = deployQueue[application][0];
 
     if(deployUser != user){
-      msg.send('You are not the first in the queue to deploy ' + application + '. Next to deploy is ' + deployUser);
+      msg.emote('You are not the first in the queue to deploy ' + application + '. Next to deploy is ' + deployUser);
       return 0;
     }
 
     deployQueue[application].shift();
     setOnGoingDeploy(application, deployUser);
-    msg.send('You are now the active deploy user for ' + application);
+    msg.emote('You are now the active deploy user for ' + application);
   });
 
   robot.hear(/deploy complete ([\w-]+)/, function(msg) {
@@ -170,23 +170,23 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     activeDeployUser = getOnGoingDeploy(application);
     if(activeDeployUser === null){
-      msg.send('There is no ongoing deploy for ' + application);
+      msg.emote('There is no ongoing deploy for ' + application);
       return 0;
     }
 
     if(activeDeployUser != user){
-      msg.send('You cannot complete a deploy started by other user (' + activeDeployUser + ') for ' + application);
+      msg.emote('You cannot complete a deploy started by other user (' + activeDeployUser + ') for ' + application);
       return 0;
     }
 
     setOnGoingDeploy(application, null);
-    msg.send('Your deploy is now complete for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
+    msg.emote('Your deploy is now complete for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
   });
 
   robot.hear(/deploy cancel ([\w-]+)/, function(msg) {
@@ -196,23 +196,23 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     activeDeployUser = getOnGoingDeploy(application);
     if(activeDeployUser === null){
-      msg.send('There is no ongoing deploy for ' + application);
+      msg.emote('There is no ongoing deploy for ' + application);
       return 0;
     }
 
     if(activeDeployUser != user){
-      msg.send('You cannot cancel a deploy started by other user (' + activeDeployUser + ') for ' + application);
+      msg.emote('You cannot cancel a deploy started by other user (' + activeDeployUser + ') for ' + application);
       return 0;
     }
 
     setOnGoingDeploy(application, null);
-    msg.send('Your deploy is now cancelled for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
+    msg.emote('Your deploy is now cancelled for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
   });
 
   robot.hear(/deploy next ([\w-]+)/, function(msg) {
@@ -222,17 +222,17 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
     var nextUser = nextUserToDeploy(application);
     if(nextUser === undefined){
-      msg.send('There are no scheduled users to deploy');
+      msg.emote('There are no scheduled users to deploy');
       return 0;
     }
 
-    msg.send('Next user to deploy ' + application + ': ' + nextUserToDeploy(application));
+    msg.emote('Next user to deploy ' + application + ': ' + nextUserToDeploy(application));
   });
 
   robot.hear(/deploy status ([\w-]+)/, function(msg) {
@@ -242,7 +242,7 @@ module.exports = function(robot) {
 
     applicationQueue = deployQueue[application];
     if(applicationQueue === undefined){
-      msg.send('Application ' + application + ' is not registered for deploy management');
+      msg.emote('Application ' + application + ' is not registered for deploy management');
       return 0;
     }
 
@@ -267,6 +267,6 @@ module.exports = function(robot) {
       onGoingDeployStatus = 'Ongoing deploy started by ' + onGoingDeployUser + ' for ' + application;
     }
 
-    msg.send(applicationQueueStatus + '\n' + onGoingDeployStatus);
+    msg.emote(applicationQueueStatus + '\n' + onGoingDeployStatus);
   });
 };
