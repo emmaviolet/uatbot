@@ -58,7 +58,7 @@ describe('deployQueue', function() {
                     'deploy cancel <application>     - cancels a deploy for an application\n' +
                     'deploy complete <application>   - completes the application deploy and removes the user from the deployment queue\n' +
                     'deploy next <application>       - return the first user in the deployment queue for the given application\n' +
-                    'deploy status <application>     - returns all the users in the deployment queue for the given application'
+                    'deploy status <application>     - returns all the users in the deployment queue for the given application\n'
                 );
                 done();
             });

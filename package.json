@@ -18,14 +18,12 @@
     "hubot-rules": "^0.1.0",
     "hubot-scripts": "^2.5.16",
     "hubot-shipit": "^0.1.2",
-    "hubot-youtube": "^0.1.2",
-    "parse-comments": "^0.4.1"
+    "hubot-youtube": "^0.1.2"
   },
   "devDependencies": {
     "coffee-script": "~1.6.3",
     "chai": "~1.9.0",
     "hubot-mock-adapter": "~1.0.0",
-    "lodash": "^3.7.0",
     "mocha": "~1.17.1",
     "jasmine-node": "1.14.5",
     "sinon": "~1.9.0",
