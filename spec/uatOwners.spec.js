@@ -1,6 +1,6 @@
 var chai = require('chai');
-var sinon = require('sinon');
-var sinonChai = require('sinon-chai');
+var sinon = require("sinon");
+var sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
 var should = chai.should(), expect = chai.expect;
@@ -58,7 +58,7 @@ describe('uatOwners', function() {
                     'uat status         - returns all the default UAT names and the name of the person currrently allocated to them\n' +
                     'uat status <uat>   - returns the status of all listed UATs; multiple UAT names can be separated by commas or spaces\n' +
                     'uat status all     - returns the status of all known UATs\n' +
-                    'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces'
+                    'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces\n'
                 );
                 done();
             });
