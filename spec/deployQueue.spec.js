@@ -328,6 +328,22 @@ describe('deployQueue', function() {
                 expect(brain.get('onGoingDeploys')['alpaca']).to.equal(null);
                 done();
             });
+
+            describe('When there are no other pending deploys', function(){
+              beforeEach(function(done) {
+                  brain.set('deployQueue', {'alpaca': []});
+                  done();
+              });
+
+              it('says there are no more pending deploys for the application', function(done) {
+                  adapter.on('send', function(envelope, strings) {
+                      expect(strings[0]).match(/There are no pending deploys/);
+                      done();
+                  });
+                  adapter.receive(new TextMessage(user, 'deploy complete alpaca'));
+              });
+
+            });
         });
     });
 
@@ -387,6 +403,22 @@ describe('deployQueue', function() {
                 adapter.receive(new TextMessage(user, 'deploy cancel alpaca'));
                 expect(brain.get('onGoingDeploys')['alpaca']).to.equal(null);
                 done();
+            });
+
+            describe('When there are no other pending deploys', function(){
+              beforeEach(function(done) {
+                  brain.set('deployQueue', {'alpaca': []});
+                  done();
+              });
+
+              it('says there are no more pending deploys for the application', function(done) {
+                  adapter.on('send', function(envelope, strings) {
+                      expect(strings[0]).match(/There are no pending deploys/);
+                      done();
+                  });
+                  adapter.receive(new TextMessage(user, 'deploy cancel alpaca'));
+              });
+
             });
         });
     });

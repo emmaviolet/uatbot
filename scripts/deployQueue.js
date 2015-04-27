@@ -191,7 +191,17 @@ module.exports = function(robot) {
     }
 
     setOnGoingDeploy(application, null);
-    msg.emote('Your deploy is now complete for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
+
+    nextUser = nextUserToDeploy(application);
+    var nextUserToDeployInfo;
+    if(nextUser === undefined){
+      nextUserToDeployInfo = 'There are no pending deploys';
+    }
+    else{
+      nextUserToDeployInfo = 'Next user to deploy: ' + nextUser;
+    }
+
+    msg.emote('Your deploy is now complete for ' + application + '. ' + nextUserToDeployInfo);
   });
 
   robot.hear(/deploy cancel ([\w-]+)/, function(msg) {
@@ -216,8 +226,17 @@ module.exports = function(robot) {
       return 0;
     }
 
+    nextUser = nextUserToDeploy(application);
+    var nextUserToDeployInfo;
+    if(nextUser === undefined){
+      nextUserToDeployInfo = 'There are no pending deploys';
+    }
+    else{
+      nextUserToDeployInfo = 'Next user to deploy: ' + nextUser;
+    }
+
     setOnGoingDeploy(application, null);
-    msg.emote('Your deploy is now cancelled for ' + application + '. Next user to deploy: ' + nextUserToDeploy(application));
+    msg.emote('Your deploy is now cancelled for ' + application + '. ' + nextUserToDeployInfo);
   });
 
   robot.hear(/deploy next ([\w-]+)/, function(msg) {
@@ -237,7 +256,7 @@ module.exports = function(robot) {
       return 0;
     }
 
-    msg.emote('Next user to deploy ' + application + ': ' + nextUserToDeploy(application));
+    msg.emote('Next user to deploy ' + application + ': ' + nextUser);
   });
 
   robot.hear(/deploy status ([\w-]+)/, function(msg) {
