@@ -494,7 +494,7 @@ describe('deployQueue', function() {
 
         it('says the scheduled user to deploy the application', function(done) {
             adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(/Scheduled users to deploy for alpaca:\nOtherTestUser\nTestUser\nSomeOtherTestUser/);
+                expect(strings[0]).match(/Scheduled users to deploy for alpaca:\n  - OtherTestUser\n  - TestUser\n  - SomeOtherTestUser/);
                 done();
             });
             adapter.receive(new TextMessage(user, 'deploy status alpaca'));
