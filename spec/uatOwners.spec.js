@@ -1,8 +1,6 @@
-var chai = require('chai');
-var sinon = require('sinon');
-var sinonChai = require('sinon-chai');
+var chai = require('chai'), spies = require('chai-spies');
 var should = chai.should(), expect = chai.expect;
-chai.use(sinonChai);
+chai.use(spies);
 
 var path   = require('path');
 var shared = require('shared-examples-for');
@@ -26,7 +24,7 @@ describe('uatOwners', function() {
             });
 
             adapter = robot.adapter;
-            spy = sinon.spy(adapter, 'send');
+            spy = chai.spy.on(adapter, 'send');
             brain = robot.brain;
             done();
         });
