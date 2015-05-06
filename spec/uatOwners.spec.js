@@ -1,17 +1,21 @@
-var chai = require('chai'), spies = require('chai-spies');
+var chai = require('chai');
+var sinon = require('sinon');
+var sinonChai = require('sinon-chai');
+chai.use(sinonChai);
+
 var should = chai.should(), expect = chai.expect;
-chai.use(spies);
 
 var path   = require('path');
-var shared = require('shared-examples-for');
-
 var Robot       = require('hubot/src/robot');
 var TextMessage = require('hubot/src/message').TextMessage;
+
+// The below to be refactored on a future turn
 
 describe('uatOwners', function() {
     var adapter, brain, robot, spy, user;
 
     beforeEach(function(done) {
+        // create new robot, without http, using the mock adapter
         robot = new Robot(null, 'mock-adapter', false, 'UatBot');
 
         robot.adapter.on('connected', function() {
@@ -24,27 +28,16 @@ describe('uatOwners', function() {
             });
 
             adapter = robot.adapter;
-            spy = chai.spy.on(adapter, 'send');
+            spy = sinon.spy(adapter, 'send');
             brain = robot.brain;
             done();
         });
 
         robot.run();
     });
-
     afterEach(function() {
+        spy.should.have.been.called;
         robot.shutdown();
-    });
-
-    shared.examplesFor('message response', function(attributes) {
-        it('responds to the user\'s message', function(done) {
-            adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).match(new RegExp(attributes.response));
-                done();
-            });
-            adapter.receive(new TextMessage(user, attributes.request));
-            spy.should.have.been.called;
-        });
     });
 
     it('retrieves a UAT name from a string and returns it in lower case', function(done) {
@@ -56,33 +49,34 @@ describe('uatOwners', function() {
     });
 
     describe('uat help', function() {
-        var expectedResponse = [
-            'uat grab <uat>     - allocates the user to the UAT if the UAT is available',
-            'uat release <uat>  - removes the user from the UAT',
-            'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available',
-            'uat status         - returns all the default UAT names and the name of the person currrently allocated to them',
-            'uat status <uat>   - returns the status of all listed UATs; multiple UAT names can be separated by commas or spaces',
-            'uat status all     - returns the status of all known UATs',
-            'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces'
-        ].join('\n')
-
-        it('displays all known uat commands', function(done) {
+        it('describes all hubot uat functions', function(done) {
             adapter.on('send', function(envelope, strings) {
-                expect(strings[0]).to.equal(expectedResponse);
+                expect(strings[0]).to.equal(
+                    'uat grab <uat>     - allocates the user to the UAT if the UAT is available\n' +
+                    'uat release <uat>  - removes the user from the UAT\n' +
+                    'uat steal <uat>    - allocates the user to the UAT even if the UAT is not available\n' +
+                    'uat status         - returns all the default UAT names and the name of the person currrently allocated to them\n' +
+                    'uat status <uat>   - returns the status of all listed UATs; multiple UAT names can be separated by commas or spaces\n' +
+                    'uat status all     - returns the status of all known UATs\n' +
+                    'uat default <uat>  - sets default UATs for the room (for use with `uat status`); multiple default UATs can be set, separated by commas or spaces'
+                );
                 done();
             });
             adapter.receive(new TextMessage(user, 'uat help'));
-            spy.should.have.been.called;
-        });
+        })
     });
 
     describe('uat grab <uat>', function() {
 
         describe('When the UAT exists', function() {
             describe('and the UAT is free', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat grab goldeneye', response: 'TestUser has grabbed goldeneye' }
-                );
+                it('says the user has taken the UAT', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/TestUser has grabbed goldeneye/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                });
 
                 it('assigns the user to the UAT', function(done) {
                     adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
@@ -97,9 +91,13 @@ describe('uatOwners', function() {
                     done();
                 });
 
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat grab goldeneye', response: 'You already have goldeneye, TestUser' }
-                );
+                it('says the user already has the UAT', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/You already have goldeneye, TestUser/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                });
 
                 it('does not change the UAT assignment', function(done) {
                     adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
@@ -114,9 +112,13 @@ describe('uatOwners', function() {
                     done();
                 });
 
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat grab goldeneye', response: 'AnotherUser already has goldeneye' }
-                );
+                it('tells the user who has the UAT', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/AnotherUser already has goldeneye/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
+                });
 
                 it('does not change the UAT assignment', function(done) {
                     adapter.receive(new TextMessage(user, 'uat grab goldeneye'));
@@ -127,9 +129,13 @@ describe('uatOwners', function() {
         });
 
         describe('When the UAT is not registered', function() {
-            shared.shouldBehaveLike('message response',
-                { request: 'uat grab not_a_uat', response: 'I don\'t know anything about not_a_uat' }
-            );
+            it('says it does not know the UAT', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat grab not_a_uat'));
+            });
         });
     });
 
@@ -137,9 +143,13 @@ describe('uatOwners', function() {
 
         describe('When the UAT exists', function() {
             describe('and the UAT is free', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat release starfox', response: 'starfox is not currently in use' }
-                );
+                it('says the UAT is not in use', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/starfox is not currently in use/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                });
 
                 it('does not change the UAT assignment', function(done) {
                     adapter.receive(new TextMessage(user, 'uat release starfox'));
@@ -154,9 +164,13 @@ describe('uatOwners', function() {
                     done();
                 });
 
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat release starfox', response: 'TestUser has released starfox' }
-                );
+                it('says the user has released the UAT', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/TestUser has released starfox/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                });
 
                 it('removes the user from the UAT', function(done) {
                     adapter.receive(new TextMessage(user, 'uat release starfox'));
@@ -171,9 +185,13 @@ describe('uatOwners', function() {
                     done();
                 });
 
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat release starfox', response: 'AnotherUser currently has starfox' }
-                );
+                it('tells the user who has the UAT', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/AnotherUser currently has starfox/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat release starfox'));
+                });
 
                 it('does not change the UAT assignment', function(done) {
                     adapter.receive(new TextMessage(user, 'uat release starfox'));
@@ -184,9 +202,13 @@ describe('uatOwners', function() {
         });
 
         describe('When the UAT is not registered', function() {
-            shared.shouldBehaveLike('message response',
-                { request: 'uat release not_a_uat', response: 'I don\'t know anything about not_a_uat' }
-            );
+            it('says it does not know the UAT', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat release not_a_uat'));
+            });
         });
     });
 
@@ -198,9 +220,13 @@ describe('uatOwners', function() {
                 done();
             });
 
-            shared.shouldBehaveLike('message response',
-                { request: 'uat steal starfox', response: 'TestUser has stolen starfox' }
-            );
+            it('says the user has stolen the UAT', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/TestUser has stolen starfox/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat steal starfox'));
+            });
 
             it('assigns the user to the UAT', function(done) {
                 adapter.receive(new TextMessage(user, 'uat steal starfox'));
@@ -210,9 +236,13 @@ describe('uatOwners', function() {
         });
 
         describe('When the UAT is not registered', function() {
-            shared.shouldBehaveLike('message response',
-                { request: 'uat steal not_a_uat', response: 'I don\'t know anything about not_a_uat' }
-            );
+            it('says it does not know the UAT', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/I don't know anything about not_a_uat/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat steal not_a_uat'));
+            });
         });
     });
 
@@ -232,63 +262,91 @@ describe('uatOwners', function() {
                     brain.set('roomSettings', {'#testroom': {'uat': ['goldeneye', 'kirby'] }});
                     done();
                 })
-
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status', response: 'goldeneye: \nkirby: Test3\n' }
-                );
+                it('lists the default UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/goldeneye: \nkirby: Test3/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status'));
+                    done();
+                });
             });
 
             describe('when default UATs have not been set', function() {
-                var expectedResponse = [
-                    'astroboy: Test1', 'derbystallion: Test2', 'donkeykong: ', 'doubledragon: ',
-                    'galaga: ', 'ghostbusters: ', 'goldeneye: ', 'iceclimber: ', 'kirby: Test3',
-                    'mariogolf: ', 'metroid: ', 'mickeymania: Test4', 'mortalkombat: ', 'pikmin: ',
-                    'quake: ', 'starfox: ', 'streetfighter: ', 'yoshi: ', 'zelda: \n'
-                ].join('\n')
-
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status', response: expectedResponse }
-                );
+                it('lists all the UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).to.equal(
+                            'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \n' +
+                            'galaga: \nghostbusters: \ngoldeneye: \niceclimber: \nkirby: Test3\n' +
+                            'mariogolf: \nmetroid: \nmickeymania: Test4\nmortalkombat: \npikmin: \n' +
+                            'quake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
+                        );
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status'));
+                    done();
+                });
             });
         });
 
         describe('uat status all', function() {
-            var expectedResponse = [
-                'astroboy: Test1', 'derbystallion: Test2', 'donkeykong: ', 'doubledragon: ',
-                'galaga: ', 'ghostbusters: ', 'goldeneye: ', 'iceclimber: ', 'kirby: Test3',
-                'mariogolf: ', 'metroid: ', 'mickeymania: Test4', 'mortalkombat: ', 'pikmin: ',
-                'quake: ', 'starfox: ', 'streetfighter: ', 'yoshi: ', 'zelda: \n'
-            ].join('\n')
-
-            shared.shouldBehaveLike('message response',
-                { request: 'uat status', response: expectedResponse }
-            );
+            it('lists all the UATs and their owners', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).to.equal(
+                        'astroboy: Test1\nderbystallion: Test2\ndonkeykong: \ndoubledragon: \n' +
+                        'galaga: \nghostbusters: \ngoldeneye: \niceclimber: \nkirby: Test3\n' +
+                        'mariogolf: \nmetroid: \nmickeymania: Test4\nmortalkombat: \n' +
+                        'pikmin: \nquake: \nstarfox: \nstreetfighter: \nyoshi: \nzelda: \n'
+                    );
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat status all'));
+                done();
+            });
         });
 
         describe('uat status <uat>', function() {
-            describe('when UAT names are comma separated', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status starfox, derbystallion', response: 'starfox: \nderbystallion: Test2\n' }
-                );
+            it('strips out commas and white space', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/starfox: \nderbystallion: Test2/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat status starfox, derbystallion'));
+                done();
             });
 
-            describe('when UAT names are space separated', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status astroboy starfox', response: 'astroboy: Test1\nstarfox: \n' }
-                );
-            });
+            describe('when the UAT names are valid', function() {
+                it('lists the given UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status astroboy starfox'));
+                    done();
+                });
+            })
 
             describe('when the UAT names are invalid', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status fudge broom', response: 'I don\'t know anything about those UATs' }
-                );
-            });
+                it('tells the user it does not know about the UATs', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/I don\'t know anything about those UATs/);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status fudge broom'));
+                    done();
+                });
+            })
 
             describe('when the UAT names are a combination of valid and invalid', function() {
-                shared.shouldBehaveLike('message response',
-                    { request: 'uat status astroboy invalid starfox', response: 'astroboy: Test1\nstarfox: \n' }
-                );
-            });
+                it('lists the valid UATs and their owners', function(done) {
+                    adapter.on('send', function(envelope, strings) {
+                        expect(strings[0]).match(/astroboy: Test1\nstarfox: /);
+                        done();
+                    });
+                    adapter.receive(new TextMessage(user, 'uat status astroboy invalid starfox'));
+                    done();
+                });
+            })
         });
     });
 
@@ -307,9 +365,13 @@ describe('uatOwners', function() {
                 done();
             });
 
-            shared.shouldBehaveLike('message response',
-                { request: 'uat default yoshi, zelda', response: 'Default UATs for #testroom are now: yoshi zelda' }
-            );
+            it('sends the default UAT settings to the room', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/Default UATs for #testroom are now: yoshi zelda/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat default yoshi, zelda'));
+            });
         });
         describe('when settings are already assigned to the room', function() {
             beforeEach(function(done) {
@@ -342,9 +404,13 @@ describe('uatOwners', function() {
                 done();
             });
 
-            shared.shouldBehaveLike('message response',
-                { request: 'uat default pikmin, metroid', response: 'Default UATs for #testroom are now: pikmin metroid' }
-            );
+            it('sends the default UAT settings to the room', function(done) {
+                adapter.on('send', function(envelope, strings) {
+                    expect(strings[0]).match(/Default UATs for #testroom are now: pikmin metroid/);
+                    done();
+                });
+                adapter.receive(new TextMessage(user, 'uat default pikmin, metroid'));
+            });
         });
     });
 });
