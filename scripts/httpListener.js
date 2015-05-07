@@ -11,8 +11,7 @@ module.exports = function(robot) {
 
   robot.router.post('/pulls', function(request, response) {
     var pullRequests = getPulls();
-    // data = JSON.parse(request);
-    pullRequests.push(request);
+    pullRequests.push(request['hook_id']);
 
     response.send('OK');
   });
