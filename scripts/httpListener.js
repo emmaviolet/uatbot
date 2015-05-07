@@ -19,6 +19,7 @@ module.exports = function(robot) {
 
   robot.hear(/pull requests/, function(msg) {
     var pullRequests = getPulls();
+    msg.emote('There are ' + pullRequests.length + ' pull requests');
     msg.emote('Pull Requests:\n' + pullRequests);
   });
 
